@@ -3,10 +3,9 @@
 A browser extension designed to reduce YouTube distractions. Right now it only disables Youtube Shorts
 
 ## Features
-- Removes Shorts links from the sidebar and navigation menus.
-- Hides Shorts shelves on the YouTube home feed.
-- *Intercepts clicks on Shorts in search results and redirects to a blocking page.
-- **Direct Link Protection:** Automatically redirects any direct access to `/shorts/` URLs.
+- Completely removes YouTube Shorts from the sidebar, home screen. Direct links to Shorts are automatically blocked.
+- Set a bedtime (e.g., 22:00 to 08:00). If you try to open YouTube during these hours, you will be redirected to a Sleep Mode screen.
+- Set a maximum daily allowance for YouTube (e.g., 1h 30m). The extension runs a background timer *only* when a YouTube tab is active. Once your time is up, all YouTube tabs are blocked until the next day.
 
 ## Installation
 
