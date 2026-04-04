@@ -42,6 +42,13 @@ function blockAllYouTubeTabs() {
     });
   });
 }
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "redirect") {
+    // Die background.js leitet den Tab um (Das ist in Firefox immer erlaubt!)
+    const targetUrl = chrome.runtime.getURL(request.url);
+    chrome.tabs.update(sender.tab.id, { url: targetUrl });
+  }
+});
 
 function getNextMidnight() {
   let date = new Date();

@@ -1,14 +1,16 @@
 const storageKey = 'yt_focus_settings';
-const blockedUrl = chrome.runtime.getURL('blocked.html');
 const styleId = 'yt-focus-style-hide-shorts';
 
+// 1. Sichere Sleep-Mode-Prüfung
 function isSleepModeActive(settings) {
   if (!settings || !settings.enableSchedule) return false;
   
+  const start = settings.startTime || "22:00";
+  const end = settings.endTime || "08:00";
   const now = new Date();
   const currentTotalMinutes = (now.getHours() * 60) + now.getMinutes();
-  const [startH, startM] = settings.startTime.split(':').map(Number);
-  const [endH, endM] = settings.endTime.split(':').map(Number);
+  const [startH, startM] = start.split(':').map(Number);
+  const [endH, endM] = end.split(':').map(Number);
   const startTotal = (startH * 60) + startM;
   const endTotal = (endH * 60) + endM;
 
@@ -19,9 +21,12 @@ function isSleepModeActive(settings) {
   }
 }
 
+// 2. Shorts sicher ausblenden
 function applyShortsStyles(shouldBlock) {
+  const block = shouldBlock !== false; 
   let styleEl = document.getElementById(styleId);
-  if (shouldBlock) {
+  
+  if (block) {
     if (!styleEl) {
       styleEl = document.createElement('style');
       styleEl.id = styleId;
@@ -39,43 +44,55 @@ function applyShortsStyles(shouldBlock) {
   }
 }
 
+// Hilfsfunktion: Nachricht an background.js schicken
+function safeRedirect(urlSuffix) {
+  chrome.runtime.sendMessage({ action: "redirect", url: urlSuffix });
+}
+
+// 3. Haupt-Check
 function checkFocus() {
   if (window.location.href.includes(chrome.runtime.id)) return;
 
   chrome.storage.local.get([storageKey], (result) => {
-    const s = result[storageKey] || { blockShorts: true, enableSchedule: false, startTime: "22:00", endTime: "08:00" };
+    const s = result[storageKey] || {};
 
+    // A: Ist Schlafenszeit?
     if (isSleepModeActive(s)) {
-      window.location.href = blockedUrl + "?reason=time";
+      safeRedirect("blocked.html?reason=time");
       return; 
     }
 
-    applyShortsStyles(s.blockShorts);
-    if (s.blockShorts && window.location.href.includes('/shorts/')) {
-      window.location.href = blockedUrl;
+    // B: Falls nicht, greift der Shorts-Blocker
+    const blockShorts = s.blockShorts !== false;
+    applyShortsStyles(blockShorts);
+    
+    if (blockShorts && window.location.href.includes('/shorts/')) {
+      safeRedirect("blocked.html");
     }
   });
 }
 
+// 4. Initialisierung & Überwachung
 function init() {
   checkFocus();
-  setInterval(checkFocus, 30000); 
+  setInterval(checkFocus, 10000); 
+  window.addEventListener('yt-navigate-finish', checkFocus);
 
   document.addEventListener('click', (e) => {
     const link = e.target.closest('a[href*="/shorts/"]');
     if (link) {
       chrome.storage.local.get([storageKey], (res) => {
-        const s = res[storageKey] || { blockShorts: true, enableSchedule: false, startTime: "22:00", endTime: "08:00" };
+        const s = res[storageKey] || {};
         
         if (isSleepModeActive(s)) {
           e.preventDefault();
-          window.location.href = blockedUrl + "?reason=time";
+          safeRedirect("blocked.html?reason=time");
           return;
         }
 
-        if (s.blockShorts) {
+        if (s.blockShorts !== false) {
           e.preventDefault();
-          window.location.href = blockedUrl;
+          safeRedirect("blocked.html");
         }
       });
     }
@@ -83,9 +100,7 @@ function init() {
 }
 
 chrome.storage.onChanged.addListener((changes) => {
-  if (changes[storageKey]) {
-    checkFocus();
-  }
+  if (changes[storageKey]) checkFocus();
 });
 
 init();
