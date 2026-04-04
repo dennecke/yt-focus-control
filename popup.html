@@ -3,31 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <style>
-    body { 
-      width: 250px; 
-      font-family: 'Segoe UI', sans-serif; 
-      padding: 15px; 
-      background: #181818; 
-      color: white; 
-      margin: 0;
-    }
-    h2 { font-size: 1.1rem; margin-top: 0; color: #cc0000; }
+    body { width: 250px; font-family: 'Segoe UI', sans-serif; padding: 15px; background: #181818; color: white; margin: 0; }
+    h2 { font-size: 1.1rem; margin-top: 0; color: #cc0000; text-align: center; }
+    
     .setting-card {
       background: #282828;
-      padding: 10px;
+      padding: 12px;
       border-radius: 8px;
       margin-bottom: 10px;
       display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .row {
+      display: flex;
       justify-content: space-between;
       align-items: center;
+      width: 100%;
     }
-    .label-text { font-size: 0.9rem; }
-    .coming-soon { 
-      font-size: 0.7rem; 
-      color: #888; 
-      font-style: italic; 
+
+    .label-text { font-size: 0.9rem; font-weight: bold; }
+
+    /* Zeit-Input Styling */
+    .time-inputs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
     }
-    /* Simple Toggle Switch */
+
+    input[type="time"] {
+      background: #444;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 4px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    input[type="time"]:focus { border-color: #cc0000; }
+
+    /* Toggle Switch */
     .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider {
@@ -46,24 +65,27 @@
   <h2>YT Focus Control</h2>
 
   <div class="setting-card">
-    <div class="label-text">Hide Shorts</div>
-    <label class="switch">
-      <input type="checkbox" id="blockShorts">
-      <span class="slider"></span>
-    </label>
-  </div>
-
-  <div class="setting-card" style="opacity: 0.6;">
-    <div>
-      <div class="label-text">Time Schedule</div>
-      <div class="coming-soon">Coming soon...</div>
+    <div class="row">
+      <span class="label-text">Hide Shorts</span>
+      <label class="switch">
+        <input type="checkbox" id="blockShorts">
+        <span class="slider"></span>
+      </label>
     </div>
   </div>
 
-  <div class="setting-card" style="opacity: 0.6;">
-    <div>
-      <div class="label-text">Session Limit</div>
-      <div class="coming-soon">Coming soon...</div>
+  <div class="setting-card">
+    <div class="row">
+      <span class="label-text">Sleep Schedule</span>
+      <label class="switch">
+        <input type="checkbox" id="enableSchedule">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="time-inputs">
+      <input type="time" id="startTime" value="22:00">
+      <span style="font-size: 0.8rem; color: #888;">to</span>
+      <input type="time" id="endTime" value="08:00">
     </div>
   </div>
 
