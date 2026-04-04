@@ -1,11 +1,10 @@
 {
   "manifest_version": 3,
   "name": "YT Focus Control",
-  "version": "0.1.0",
-  "description": "Regulate your Youtube consumption",
-  "permissions": ["storage"],
-  "action": {
-    "default_popup": "popup.html"
+  "version": "1.0",
+  "permissions": ["storage", "tabs", "alarms"],
+  "background": {
+    "scripts": ["background.js"]
   },
   "content_scripts": [
     {
@@ -13,10 +12,7 @@
       "js": ["content.js"]
     }
   ],
-  "web_accessible_resources": [
-    {
-      "resources": ["blocked.html"],
-      "matches": ["*://*.youtube.com/*"]
-    }
-  ]
+  "action": {
+    "default_popup": "popup.html"
+  }
 }
