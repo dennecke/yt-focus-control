@@ -1,6 +1,6 @@
 # YT Focus Control
 
-A browser extension designed to reduce YouTube distractions. Right now it only disables Youtube Shorts
+A browser extension designed to reduce YouTube distractions.
 
 ## Features
 - Completely removes YouTube Shorts from the sidebar, home screen. Direct links to Shorts are automatically blocked.
